@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Para ti ❤️</title>
+
+  <style>
+    body {
+      font-family: 'Courier New', cursive;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      text-align: center;
+      margin-top: 50px;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 40px;
+      color: white;
+    }
+
+    button {
+      background: white;
+      border: none;
+      padding: 12px 20px;
+      margin: 10px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 16px;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+    }
+
+    #form {
+      display: none;
+      margin-top: 20px;
+    }
+
+    input, textarea {
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      width: 250px;
+      margin: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>¿Me amas? ❤️</h1>
+
+  <div id="step1">
+    <button id="noBtn">No</button>
+    <button onclick="yes1()">Sí</button>
+  </div>
+
+  <div id="step2" style="display:none;">
+    <p>¿Segura que no? 🥺</p>
+    <button onclick="no2()">Sí</button>
+    <button onclick="yes1()">No</button>
+  </div>
+
+  <div id="step3" style="display:none;">
+    <p>¿Por qué? 💌</p>
+    <button onclick="showForm()">Responder</button>
+  </div>
+
+  <div id="form">
+    <input type="text" id="nombre" placeholder="Nombre de tu novio"><br>
+    <textarea id="razones" placeholder="Escribe por qué lo amas"></textarea><br>
+    <button onclick="guardar()">Enviar ❤️</button>
+  </div>
+
+  <script>
+    function yes1() {
+      document.getElementById('step1').style.display = 'none';
+      document.getElementById('step2').style.display = 'none';
+      document.getElementById('step3').style.display = 'block';
+    }
+
+    function no2() {
+      alert('Bueno... me dolió 😢');
+    }
+
+    function showForm() {
+      document.getElementById('form').style.display = 'block';
+    }
+
+    function guardar() {
+      const nombre = document.getElementById('nombre').value;
+      const razones = document.getElementById('razones').value;
+
+      fetch('/guardar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, razones })
+      })
+      .then(res => res.json())
+      .then(() => alert('Guardado ❤️'));
+    }
+
+    // Botón que huye 😈
+    const noBtn = document.getElementById('noBtn');
+
+    noBtn.addEventListener('mouseover', () => {
+      const x = Math.random() * window.innerWidth;
+      const y = Math.random() * window.innerHeight;
+
+      noBtn.style.position = 'absolute';
+      noBtn.style.left = x + 'px';
+      noBtn.style.top = y + 'px';
+    });
+  </script>
+
+</body>
+</html>
