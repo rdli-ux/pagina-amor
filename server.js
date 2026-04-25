@@ -1,43 +1,38 @@
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const path = require('path');
+const fs = require('fs');
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
-
-// Servir el HTML
 app.use(express.static(__dirname));
 
-// Base de datos
-const db = new sqlite3.Database('database.db');
+const FILE = 'respuestas.json';
 
-db.run(`
-CREATE TABLE IF NOT EXISTS respuestas (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  nombre TEXT,
-  razones TEXT
-)
-`);
+// crear archivo si no existe
+if (!fs.existsSync(FILE)) {
+  fs.writeFileSync(FILE, '[]');
+}
 
-// Guardar datos
+// guardar datos
 app.post('/guardar', (req, res) => {
   const { nombre, razones } = req.body;
-  db.run("INSERT INTO respuestas (nombre, razones) VALUES (?, ?)", [nombre, razones]);
+
+  const data = JSON.parse(fs.readFileSync(FILE));
+  data.push({ nombre, razones });
+
+  fs.writeFileSync(FILE, JSON.stringify(data, null, 2));
+
   res.json({ status: 'ok' });
 });
 
-// Ver respuestas
+// ver respuestas
 app.get('/respuestas', (req, res) => {
-  db.all("SELECT * FROM respuestas", [], (err, rows) => {
-    if (err) return res.status(500).json(err);
-    res.json(rows);
-  });
+  const data = JSON.parse(fs.readFileSync(FILE));
+  res.json(data);
 });
 
-// Iniciar servidor
 app.listen(3000, () => {
-  console.log('Servidor en http://localhost:3000');
+  console.log('Servidor corriendo');
 });
